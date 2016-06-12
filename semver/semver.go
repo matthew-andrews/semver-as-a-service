@@ -2,8 +2,9 @@ package semver
 
 import (
 	"errors"
-	"github.com/matthew-andrews/semver/latest"
+	"github.com/matthew-andrews/go-version"
 	"github.com/matthew-andrews/semver/sources"
+	"sort"
 )
 
 func Semver(sourceName string, id string, satisfies string) (string, error) {
@@ -21,5 +22,6 @@ func Semver(sourceName string, id string, satisfies string) (string, error) {
 		return "", err
 	}
 
-	return latest.Latest(versions), nil
+	sort.Sort(version.Collection(versions))
+	return versions[len(versions)-1].Raw(), nil
 }
