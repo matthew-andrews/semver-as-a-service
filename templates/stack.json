@@ -42,18 +42,27 @@
             "StatusCode": "200",
             "ResponseModels": {
               "text/plain": "Empty"
+            },
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
             }
           },
           {
             "StatusCode": "404",
             "ResponseModels": {
               "text/plain": "Empty"
+            },
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
             }
           },
           {
             "StatusCode": "500",
             "ResponseModels": {
               "text/plain": "Empty"
+            },
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
             }
           }
         ],
@@ -65,12 +74,14 @@
           "IntegrationResponses": [
             {
               "StatusCode": 200,
+              "ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
               "ResponseTemplates": {
                 "text/plain": "$input.path('$')"
               }
             },
             {
               "StatusCode": 404,
+              "ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
               "ResponseTemplates": {
                 "text/plain": "$input.path('$.errorMessage')"
               },
@@ -78,6 +89,7 @@
             },
             {
               "StatusCode": 500,
+              "ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
               "ResponseTemplates": {
                 "text/plain": "$input.path('$.errorMessage')"
               },
@@ -97,6 +109,46 @@
           },
           "Type": "AWS",
           "Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/arn:aws:lambda:", { "Ref": "AWS::Region" }, ":", { "Ref": "AWS::AccountId" }, ":function:semver_satisfies/invocations"] ] }
+        }
+      }
+    },
+    "ApiGatewayGithubOwnerRepoOptionsMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "text/plain": "Empty"
+            }
+          }
+        ],
+        "ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
+        "RestApiId": { "Ref": "ApiGateway" },
+        "Integration": {
+          "Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": [
+            {
+              "StatusCode": 200,
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'content-type'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              }
+            }
+          ],
+          "RequestTemplates": {
+            "text/plain": "{\"statusCode\":200}"
+          },
+          "Type": "MOCK"
         }
       }
     }
