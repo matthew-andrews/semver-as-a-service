@@ -43,6 +43,18 @@
             "ResponseModels": {
               "text/plain": "Empty"
             }
+          },
+          {
+            "StatusCode": "404",
+            "ResponseModels": {
+              "text/plain": "Empty"
+            }
+          },
+          {
+            "StatusCode": "500",
+            "ResponseModels": {
+              "text/plain": "Empty"
+            }
           }
         ],
         "ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
@@ -56,6 +68,20 @@
               "ResponseTemplates": {
                 "text/plain": "$input.path('$')"
               }
+            },
+            {
+              "StatusCode": 404,
+              "ResponseTemplates": {
+                "text/plain": "$input.path('$.errorMessage')"
+              },
+              "SelectionPattern": ".*404 Not Found.*"
+            },
+            {
+              "StatusCode": 500,
+              "ResponseTemplates": {
+                "text/plain": "$input.path('$.errorMessage')"
+              },
+              "SelectionPattern": "^(.|\n)+$"
             }
           ],
           "RequestTemplates": {
