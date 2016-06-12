@@ -20,5 +20,7 @@ The idea is that this API can be combined with other scripts, for example instal
 The following snippet installs the latest version of [apex](https://github.com/apex/apex) for OS X:-
 
 ```
-curl -sf https://api.mattandre.ws/semver/github/apex/apex | xargs -I '{}' echo https://github.com/apex/apex/releases/{}/download/apex_darwin_386 -o /usr/local/bin/apex && chmod +x /usr/local/bin/apex
+curl -sf https://api.mattandre.ws/semver/github/apex/apex \
+	| xargs -I '{}' echo https://github.com/apex/apex/releases/{}/download/apex_darwin_386 -o /usr/local/bin/apex \
+	&& chmod +x /usr/local/bin/apex
 ```
