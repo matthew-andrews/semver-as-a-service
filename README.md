@@ -1,4 +1,4 @@
-# Semver as a service
+# Semver as a Service
 
 Similar to [semver.io](https://semver.io) but hasn't got all the same features (yet) but supports all repositories on GitHub rather than a small curated selection of projects.
 
