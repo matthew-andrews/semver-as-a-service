@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/matthew-andrews/semver/latest"
-	"github.com/matthew-andrews/semver/sources"
+	"github.com/matthew-andrews/semver/semver"
 	"github.com/urfave/cli"
 	"os"
 )
@@ -20,21 +19,21 @@ func main() {
 			Value: "github",
 		},
 		cli.StringFlag{
+			Name:  "satisfies",
+			Usage: "semver pattern or aliases match versions against, only 'latest' currently supported",
+			Value: "latest",
+		},
+		cli.StringFlag{
 			Name:  "id",
 			Usage: "identifier of the package, for example spf13/hugo",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-		source, err := sources.New(c.String("source"))
+		version, err := semver.Semver(c.String("source"), c.String("id"), c.String("satisfies"))
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("%s", err), 1)
 		}
-
-		versions, err := source.VersionsFor(c.String("id"))
-		if err != nil {
-			return cli.NewExitError(fmt.Sprintf("%s", err), 1)
-		}
-		fmt.Println(latest.Latest(versions))
+		fmt.Println(version)
 		return nil
 	}
 	app.Run(os.Args)

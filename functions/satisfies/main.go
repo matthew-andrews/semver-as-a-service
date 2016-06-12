@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"github.com/apex/go-apex"
-	"github.com/matthew-andrews/semver/latest"
-	"github.com/matthew-andrews/semver/sources"
+	"github.com/matthew-andrews/semver/semver"
 )
 
 type message struct {
-	Source string `json:"source"`
-	Id     string `json:"id"`
+	Satisfies string `json:"satisfies"`
+	Source    string `json:"source"`
+	Id        string `json:"id"`
 }
 
 func main() {
@@ -19,15 +19,10 @@ func main() {
 			return nil, err
 		}
 
-		client, err := sources.New(m.Source)
+		version, err := semver.Semver(m.Source, m.Id, m.Satisfies)
 		if err != nil {
 			return nil, err
 		}
-
-		versions, err := client.VersionsFor(m.Id)
-		if err != nil {
-			return nil, err
-		}
-		return latest.Latest(versions), nil
+		return version, nil
 	})
 }
