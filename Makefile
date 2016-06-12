@@ -11,3 +11,6 @@ n-express:
 
 deploy:
 	apex deploy -s GITHUB_API_KEY=$$GITHUB_API_KEY
+
+deploy-dry:
+	apex deploy --dry-run -s GITHUB_API_KEY=$$GITHUB_API_KEY
