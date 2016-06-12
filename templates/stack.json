@@ -93,7 +93,7 @@
               "ResponseTemplates": {
                 "text/plain": "$input.path('$.errorMessage')"
               },
-              "SelectionPattern": "(\n|.)+"
+              "SelectionPattern": "(\\n|.)+"
             }
           ],
           "RequestTemplates": {
