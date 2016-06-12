@@ -24,10 +24,10 @@ func main() {
 			return nil, err
 		}
 
-		versions, err := client(m.Id)
+		versions, err := client.VersionsFor(m.Id)
 		if err != nil {
 			return nil, err
 		}
-		return latest.Latest(versions)
+		return latest.Latest(versions), nil
 	})
 }

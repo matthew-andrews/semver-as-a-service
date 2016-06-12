@@ -8,3 +8,6 @@ apex:
 
 n-express:
 	source .env; go run main.go --id financial-times/n-express | xargs echo n-express:
+
+deploy:
+	apex deploy -s GITHUB_API_KEY=$$GITHUB_API_KEY
