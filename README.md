@@ -21,6 +21,6 @@ The following snippet installs the latest version of [apex](https://github.com/a
 
 ```
 curl -sf https://api.mattandre.ws/semver/github/apex/apex \
-	| xargs -I '{}' echo https://github.com/apex/apex/releases/{}/download/apex_darwin_386 -o /usr/local/bin/apex \
+	| xargs -I '{}' curl -sfL https://github.com/apex/apex/releases/{}/download/apex_darwin_386 -o /usr/local/bin/apex \
 	&& chmod +x /usr/local/bin/apex
 ```
