@@ -19,10 +19,6 @@ func main() {
 			return nil, err
 		}
 
-		version, err := semver.Semver(m.Source, m.Id, m.Satisfies)
-		if err != nil {
-			return nil, err
-		}
-		return version, nil
+		return semver.Semver(m.Source, m.Id, m.Satisfies)
 	})
 }
