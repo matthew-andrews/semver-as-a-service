@@ -1,0 +1,78 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "ApiGateway": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Description": "Provides semver as as service",
+        "Name": "semver-api"
+      }
+    },
+    "ApiGatewayGithubResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "PathPart": "github",
+        "ParentId": { "Fn::GetAtt": [ "ApiGateway", "RootResourceId" ] },
+        "RestApiId": { "Ref": "ApiGateway" }
+      }
+    },
+    "ApiGatewayGithubOwnerResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "PathPart": "{owner}",
+        "ParentId": { "Ref": "ApiGatewayGithubResource" },
+        "RestApiId": { "Ref": "ApiGateway" }
+      }
+    },
+    "ApiGatewayGithubOwnerRepoResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "PathPart": "{repo}",
+        "ParentId": { "Ref": "ApiGatewayGithubOwnerResource" },
+        "RestApiId": { "Ref": "ApiGateway" }
+      }
+    },
+    "ApiGatewayGithubOwnerRepoGetMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseModels": {
+              "text/plain": "Empty"
+            }
+          }
+        ],
+        "ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
+        "RestApiId": { "Ref": "ApiGateway" },
+        "Integration": {
+          "Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": [
+            {
+              "StatusCode": 200,
+              "ResponseTemplates": {
+                "text/plain": "$input.path('$')"
+              }
+            }
+          ],
+          "RequestTemplates": {
+            "application/json": {
+              "Fn::Join": [ "", [
+                "{",
+                  "\"satisfies\": \"latest\",",
+                  "\"source\": \"github\",",
+                  "\"id\": \"$input.params('owner')/$input.params('repo')\"",
+                "}"
+              ] ]
+            }
+          },
+          "Type": "AWS",
+          "Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/arn:aws:lambda:", { "Ref": "AWS::Region" }, ":", { "Ref": "AWS::AccountId" }, ":function:semver_satisfies/invocations"] ] }
+        }
+      }
+    }
+  }
+}
