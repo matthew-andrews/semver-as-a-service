@@ -16,7 +16,7 @@ func Semver(source sourceInterface, id string, satisfies string) (string, error)
 		return "", err
 	}
 
-	sort.Reverse(version.Collection(versions))
+	sort.Sort(sort.Reverse(version.Collection(versions)))
 	if satisfies == "latest" {
 		return versions[0].Raw(), nil
 	}
