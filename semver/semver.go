@@ -8,10 +8,6 @@ import (
 )
 
 func Semver(sourceName string, id string, satisfies string) (string, error) {
-	if satisfies != "latest" {
-		return "", errors.New("satisfies must equal latest")
-	}
-
 	source, err := sources.New(sourceName)
 	if err != nil {
 		return "", err
@@ -22,6 +18,21 @@ func Semver(sourceName string, id string, satisfies string) (string, error) {
 		return "", err
 	}
 
-	sort.Sort(version.Collection(versions))
-	return versions[len(versions)-1].Raw(), nil
+	sort.Reverse(version.Collection(versions))
+	if satisfies == "latest" {
+		return versions[0].Raw(), nil
+	}
+
+	constraint, err := version.NewConstraint(satisfies)
+	if err != nil {
+		return "", err
+	}
+
+	for _, version := range versions {
+		if constraint.Check(version) {
+			return version.Raw(), nil
+		}
+	}
+
+	return "", errors.New("no version found matching constraint")
 }
