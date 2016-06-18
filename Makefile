@@ -1,7 +1,7 @@
 run: n-makefile apex n-express
 
 n-makefile:
-	@$(env) go run main.go --id financial-times/n-makefile --satisfies '<1.0' | xargs echo n-makefile:
+	@$(env) go run main.go --id financial-times/n-makefile --satisfies '~1.0.0' | xargs echo n-makefile:
 
 apex:
 	@$(env) go run main.go --id apex/apex | xargs echo apex:
