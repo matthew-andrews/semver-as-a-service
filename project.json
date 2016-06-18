@@ -2,5 +2,6 @@
   "name": "semver",
   "description": "gets the versions of things and does some semver to them",
   "role": "arn:aws:iam::862433486593:role/ApplicationRoleFor_semver",
-  "retainedVersions": 5
+  "retainedVersions": 5,
+  "timeout": 5
 }
