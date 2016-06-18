@@ -20,7 +20,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:  "satisfies",
-			Usage: "semver pattern or aliases match versions against, only 'latest' currently supported",
+			Usage: "semver pattern or aliases (e.g. 'latest') to match versions against",
 			Value: "latest",
 		},
 		cli.StringFlag{

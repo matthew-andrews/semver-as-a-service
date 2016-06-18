@@ -1,8 +1,7 @@
 run: n-makefile apex n-express
 
-
 n-makefile:
-	@$(env) go run main.go --id financial-times/n-makefile | xargs echo n-makefile:
+	@$(env) go run main.go --id financial-times/n-makefile --satisfies '<1.0' | xargs echo n-makefile:
 
 apex:
 	@$(env) go run main.go --id apex/apex | xargs echo apex:
@@ -15,5 +14,8 @@ deploy:
 
 deploy-dry:
 	@$(env) apex deploy --dry-run -s GITHUB_API_KEY=$$GITHUB_API_KEY
+
+help:
+	go run main.go --help
 
 env = $(shell cat .env | sed 's/^/export /' | tr '\n' ';')
