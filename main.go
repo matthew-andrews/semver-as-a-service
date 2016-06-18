@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/matthew-andrews/semver/semver"
-	"github.com/matthew-andrews/semver/sources"
+	"github.com/matthew-andrews/semver-as-a-service/semver"
+	"github.com/matthew-andrews/semver-as-a-service/sources"
 	"github.com/urfave/cli"
 	"os"
 )

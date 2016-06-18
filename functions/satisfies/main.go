@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"github.com/apex/go-apex"
-	"github.com/matthew-andrews/semver/semver"
-	"github.com/matthew-andrews/semver/sources"
+	"github.com/matthew-andrews/semver-as-a-service/semver"
+	"github.com/matthew-andrews/semver-as-a-service/sources"
 )
 
 type message struct {
