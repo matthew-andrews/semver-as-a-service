@@ -18,4 +18,7 @@ deploy-dry:
 help:
 	go run main.go --help
 
+test:
+	go test -cover ./...
+
 env = $(shell cat .env | sed 's/^/export /' | tr '\n' ';')

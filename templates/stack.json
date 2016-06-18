@@ -1,156 +1,284 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Resources": {
-    "ApiGateway": {
-      "Type": "AWS::ApiGateway::RestApi",
-      "Properties": {
-        "Description": "Provides semver as as service",
-        "Name": "semver-api"
-      }
-    },
-    "ApiGatewayGithubResource": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "PathPart": "github",
-        "ParentId": { "Fn::GetAtt": [ "ApiGateway", "RootResourceId" ] },
-        "RestApiId": { "Ref": "ApiGateway" }
-      }
-    },
-    "ApiGatewayGithubOwnerResource": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "PathPart": "{owner}",
-        "ParentId": { "Ref": "ApiGatewayGithubResource" },
-        "RestApiId": { "Ref": "ApiGateway" }
-      }
-    },
-    "ApiGatewayGithubOwnerRepoResource": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "PathPart": "{repo}",
-        "ParentId": { "Ref": "ApiGatewayGithubOwnerResource" },
-        "RestApiId": { "Ref": "ApiGateway" }
-      }
-    },
-    "ApiGatewayGithubOwnerRepoGetMethod": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "AuthorizationType": "NONE",
-        "HttpMethod": "GET",
-        "MethodResponses": [
-          {
-            "StatusCode": "200",
-            "ResponseModels": {
-              "text/plain": "Empty"
-            },
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true
-            }
-          },
-          {
-            "StatusCode": "404",
-            "ResponseModels": {
-              "text/plain": "Empty"
-            },
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true
-            }
-          },
-          {
-            "StatusCode": "500",
-            "ResponseModels": {
-              "text/plain": "Empty"
-            },
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true
-            }
-          }
-        ],
-        "ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
-        "RestApiId": { "Ref": "ApiGateway" },
-        "Integration": {
-          "Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
-          "IntegrationHttpMethod": "POST",
-          "IntegrationResponses": [
-            {
-              "StatusCode": 200,
-              "ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
-              "ResponseTemplates": {
-                "text/plain": "$input.path('$')"
-              }
-            },
-            {
-              "StatusCode": 404,
-              "ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
-              "ResponseTemplates": {
-                "text/plain": "$input.path('$.errorMessage')"
-              },
-              "SelectionPattern": ".*404 Not Found.*"
-            },
-            {
-              "StatusCode": 500,
-              "ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
-              "ResponseTemplates": {
-                "text/plain": "$input.path('$.errorMessage')"
-              },
-              "SelectionPattern": "(\\n|.)+"
-            }
-          ],
-          "RequestTemplates": {
-            "application/json": {
-              "Fn::Join": [ "", [
-                "{",
-                  "\"satisfies\": \"latest\",",
-                  "\"source\": \"github\",",
-                  "\"id\": \"$input.params('owner')/$input.params('repo')\"",
-                "}"
-              ] ]
-            }
-          },
-          "Type": "AWS",
-          "Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/arn:aws:lambda:", { "Ref": "AWS::Region" }, ":", { "Ref": "AWS::AccountId" }, ":function:semver_satisfies/invocations"] ] }
-        }
-      }
-    },
-    "ApiGatewayGithubOwnerRepoOptionsMethod": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "AuthorizationType": "NONE",
-        "HttpMethod": "OPTIONS",
-        "MethodResponses": [
-          {
-            "StatusCode": "200",
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Headers": true,
-              "method.response.header.Access-Control-Allow-Methods": true,
-              "method.response.header.Access-Control-Allow-Origin": true
-            },
-            "ResponseModels": {
-              "text/plain": "Empty"
-            }
-          }
-        ],
-        "ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
-        "RestApiId": { "Ref": "ApiGateway" },
-        "Integration": {
-          "Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
-          "IntegrationHttpMethod": "POST",
-          "IntegrationResponses": [
-            {
-              "StatusCode": 200,
-              "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Headers": "'content-type'",
-                "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
-                "method.response.header.Access-Control-Allow-Origin": "'*'"
-              }
-            }
-          ],
-          "RequestTemplates": {
-            "text/plain": "{\"statusCode\":200}"
-          },
-          "Type": "MOCK"
-        }
-      }
-    }
-  }
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Resources": {
+		"ApiGateway": {
+			"Type": "AWS::ApiGateway::RestApi",
+			"Properties": {
+				"Description": "Provides semver as as service",
+				"Name": "semver-api"
+			}
+		},
+		"ApiGatewayGithubResource": {
+			"Type": "AWS::ApiGateway::Resource",
+			"Properties": {
+				"PathPart": "github",
+				"ParentId": { "Fn::GetAtt": [ "ApiGateway", "RootResourceId" ] },
+				"RestApiId": { "Ref": "ApiGateway" }
+			}
+		},
+		"ApiGatewayGithubOwnerResource": {
+			"Type": "AWS::ApiGateway::Resource",
+			"Properties": {
+				"PathPart": "{owner}",
+				"ParentId": { "Ref": "ApiGatewayGithubResource" },
+				"RestApiId": { "Ref": "ApiGateway" }
+			}
+		},
+		"ApiGatewayGithubOwnerRepoResource": {
+			"Type": "AWS::ApiGateway::Resource",
+			"Properties": {
+				"PathPart": "{repo}",
+				"ParentId": { "Ref": "ApiGatewayGithubOwnerResource" },
+				"RestApiId": { "Ref": "ApiGateway" }
+			}
+		},
+		"ApiGatewayGithubOwnerRepoSatisfiesResource": {
+			"Type": "AWS::ApiGateway::Resource",
+			"Properties": {
+				"PathPart": "{satisfies}",
+				"ParentId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
+				"RestApiId": { "Ref": "ApiGateway" }
+			}
+		},
+		"ApiGatewayGithubOwnerRepoGetMethod": {
+			"Type": "AWS::ApiGateway::Method",
+			"Properties": {
+				"AuthorizationType": "NONE",
+				"HttpMethod": "GET",
+				"MethodResponses": [
+					{
+						"StatusCode": "200",
+						"ResponseModels": {
+							"text/plain": "Empty"
+						},
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Origin": true
+						}
+					},
+					{
+						"StatusCode": "404",
+						"ResponseModels": {
+							"text/plain": "Empty"
+						},
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Origin": true
+						}
+					},
+					{
+						"StatusCode": "500",
+						"ResponseModels": {
+							"text/plain": "Empty"
+						},
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Origin": true
+						}
+					}
+				],
+				"ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
+				"RestApiId": { "Ref": "ApiGateway" },
+				"Integration": {
+					"Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
+					"IntegrationHttpMethod": "POST",
+					"IntegrationResponses": [
+						{
+							"StatusCode": 200,
+							"ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
+							"ResponseTemplates": {
+								"text/plain": "$input.path('$')"
+							}
+						},
+						{
+							"StatusCode": 404,
+							"ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
+							"ResponseTemplates": {
+								"text/plain": "$input.path('$.errorMessage')"
+							},
+							"SelectionPattern": ".*404 Not Found.*"
+						},
+						{
+							"StatusCode": 500,
+							"ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
+							"ResponseTemplates": {
+								"text/plain": "$input.path('$.errorMessage')"
+							},
+							"SelectionPattern": "(\\n|.)+"
+						}
+					],
+					"RequestTemplates": {
+						"application/json": {
+							"Fn::Join": [ "", [
+								"{",
+									"\"satisfies\": \"latest\",",
+									"\"source\": \"github\",",
+									"\"id\": \"$input.params('owner')/$input.params('repo')\"",
+								"}"
+							] ]
+						}
+					},
+					"Type": "AWS",
+					"Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/arn:aws:lambda:", { "Ref": "AWS::Region" }, ":", { "Ref": "AWS::AccountId" }, ":function:semver_satisfies/invocations"] ] }
+				}
+			}
+		},
+		"ApiGatewayGithubOwnerRepoSatisfiesGetMethod": {
+			"Type": "AWS::ApiGateway::Method",
+			"Properties": {
+				"AuthorizationType": "NONE",
+				"HttpMethod": "GET",
+				"MethodResponses": [
+					{
+						"StatusCode": "200",
+						"ResponseModels": {
+							"text/plain": "Empty"
+						},
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Origin": true
+						}
+					},
+					{
+						"StatusCode": "404",
+						"ResponseModels": {
+							"text/plain": "Empty"
+						},
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Origin": true
+						}
+					},
+					{
+						"StatusCode": "500",
+						"ResponseModels": {
+							"text/plain": "Empty"
+						},
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Origin": true
+						}
+					}
+				],
+				"ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoSatisfiesResource" },
+				"RestApiId": { "Ref": "ApiGateway" },
+				"Integration": {
+					"Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
+					"IntegrationHttpMethod": "POST",
+					"IntegrationResponses": [
+						{
+							"StatusCode": 200,
+							"ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
+							"ResponseTemplates": {
+								"text/plain": "$input.path('$')"
+							}
+						},
+						{
+							"StatusCode": 404,
+							"ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
+							"ResponseTemplates": {
+								"text/plain": "$input.path('$.errorMessage')"
+							},
+							"SelectionPattern": ".*404 Not Found.*"
+						},
+						{
+							"StatusCode": 500,
+							"ResponseParameters": { "method.response.header.Access-Control-Allow-Origin": "'*'" },
+							"ResponseTemplates": {
+								"text/plain": "$input.path('$.errorMessage')"
+							},
+							"SelectionPattern": "(\\n|.)+"
+						}
+					],
+					"RequestTemplates": {
+						"application/json": {
+							"Fn::Join": [ "", [
+								"{",
+									"\"satisfies\": \"$util.urlDecode($input.params('satisfies'))\",",
+									"\"source\": \"github\",",
+									"\"id\": \"$input.params('owner')/$input.params('repo')\"",
+								"}"
+							] ]
+						}
+					},
+					"Type": "AWS",
+					"Uri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/arn:aws:lambda:", { "Ref": "AWS::Region" }, ":", { "Ref": "AWS::AccountId" }, ":function:semver_satisfies/invocations"] ] }
+				}
+			}
+		},
+		"ApiGatewayGithubOwnerRepoOptionsMethod": {
+			"Type": "AWS::ApiGateway::Method",
+			"Properties": {
+				"AuthorizationType": "NONE",
+				"HttpMethod": "OPTIONS",
+				"MethodResponses": [
+					{
+						"StatusCode": "200",
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Headers": true,
+							"method.response.header.Access-Control-Allow-Methods": true,
+							"method.response.header.Access-Control-Allow-Origin": true
+						},
+						"ResponseModels": {
+							"text/plain": "Empty"
+						}
+					}
+				],
+				"ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoResource" },
+				"RestApiId": { "Ref": "ApiGateway" },
+				"Integration": {
+					"Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
+					"IntegrationHttpMethod": "POST",
+					"IntegrationResponses": [
+						{
+							"StatusCode": 200,
+							"ResponseParameters": {
+								"method.response.header.Access-Control-Allow-Headers": "'content-type'",
+								"method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+								"method.response.header.Access-Control-Allow-Origin": "'*'"
+							}
+						}
+					],
+					"RequestTemplates": {
+						"text/plain": "{\"statusCode\":200}"
+					},
+					"Type": "MOCK"
+				}
+			}
+		},
+		"ApiGatewayGithubOwnerRepoSatisfiesOptionsMethod": {
+			"Type": "AWS::ApiGateway::Method",
+			"Properties": {
+				"AuthorizationType": "NONE",
+				"HttpMethod": "OPTIONS",
+				"MethodResponses": [
+					{
+						"StatusCode": "200",
+						"ResponseParameters": {
+							"method.response.header.Access-Control-Allow-Headers": true,
+							"method.response.header.Access-Control-Allow-Methods": true,
+							"method.response.header.Access-Control-Allow-Origin": true
+						},
+						"ResponseModels": {
+							"text/plain": "Empty"
+						}
+					}
+				],
+				"ResourceId": { "Ref": "ApiGatewayGithubOwnerRepoSatisfiesResource" },
+				"RestApiId": { "Ref": "ApiGateway" },
+				"Integration": {
+					"Credentials": { "Fn::Join": [ "", [ "arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/ApplicationRoleFor_semver" ] ] },
+					"IntegrationHttpMethod": "POST",
+					"IntegrationResponses": [
+						{
+							"StatusCode": 200,
+							"ResponseParameters": {
+								"method.response.header.Access-Control-Allow-Headers": "'content-type'",
+								"method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+								"method.response.header.Access-Control-Allow-Origin": "'*'"
+							}
+						}
+					],
+					"RequestTemplates": {
+						"text/plain": "{\"statusCode\":200}"
+					},
+					"Type": "MOCK"
+				}
+			}
+		}
+	}
 }
