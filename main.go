@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/matthew-andrews/semver/semver"
+	"github.com/matthew-andrews/semver/sources"
 	"github.com/urfave/cli"
 	"os"
 )
@@ -29,7 +30,12 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-		version, err := semver.Semver(c.String("source"), c.String("id"), c.String("satisfies"))
+		source, err := sources.New(c.String("source"))
+		if err != nil {
+			return cli.NewExitError(fmt.Sprintf("%s", err), 1)
+		}
+
+		version, err := semver.Semver(source, c.String("id"), c.String("satisfies"))
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("%s", err), 1)
 		}
