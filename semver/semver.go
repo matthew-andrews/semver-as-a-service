@@ -3,16 +3,14 @@ package semver
 import (
 	"errors"
 	"github.com/matthew-andrews/go-version"
-	"github.com/matthew-andrews/semver/sources"
 	"sort"
 )
 
-func Semver(sourceName string, id string, satisfies string) (string, error) {
-	source, err := sources.New(sourceName)
-	if err != nil {
-		return "", err
-	}
+type sourceInterface interface {
+	VersionsFor(string) ([]*version.Version, error)
+}
 
+func Semver(source sourceInterface, id string, satisfies string) (string, error) {
 	versions, err := source.VersionsFor(id)
 	if err != nil {
 		return "", err

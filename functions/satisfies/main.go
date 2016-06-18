@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/apex/go-apex"
 	"github.com/matthew-andrews/semver/semver"
+	"github.com/matthew-andrews/semver/sources"
 )
 
 type message struct {
@@ -19,6 +20,10 @@ func main() {
 			return nil, err
 		}
 
-		return semver.Semver(m.Source, m.Id, m.Satisfies)
+		source, err := sources.New(m.Source)
+		if err != nil {
+			return nil, err
+		}
+		return semver.Semver(source, m.Id, m.Satisfies)
 	})
 }
