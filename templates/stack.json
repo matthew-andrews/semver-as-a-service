@@ -1,11 +1,17 @@
 {
 	"AWSTemplateFormatVersion": "2010-09-09",
+	"Parameters": {
+		"ApiGatewayName": {
+			"Type": "String",
+			"Default": "semver-api"
+		}
+	},
 	"Resources": {
 		"ApiGateway": {
 			"Type": "AWS::ApiGateway::RestApi",
 			"Properties": {
 				"Description": "Provides semver as as service",
-				"Name": "semver-api"
+				"Name": { "Ref": "ApiGatewayName" }
 			}
 		},
 		"ApiGatewayGithubResource": {
