@@ -1,16 +1,19 @@
 run: n-makefile apex n-express
 
+
 n-makefile:
-	source .env; go run main.go --id financial-times/n-makefile | xargs echo n-makefile:
+	@$(env) go run main.go --id financial-times/n-makefile | xargs echo n-makefile:
 
 apex:
-	source .env; go run main.go --id apex/apex | xargs echo apex:
+	@$(env) go run main.go --id apex/apex | xargs echo apex:
 
 n-express:
-	source .env; go run main.go --id financial-times/n-express | xargs echo n-express:
+	@$(env) go run main.go --id financial-times/n-express | xargs echo n-express:
 
 deploy:
-	source .env; apex deploy -s GITHUB_API_KEY=$$GITHUB_API_KEY
+	@$(env) apex deploy -s GITHUB_API_KEY=$$GITHUB_API_KEY
 
 deploy-dry:
-	apex deploy --dry-run -s GITHUB_API_KEY=$$GITHUB_API_KEY
+	@$(env) apex deploy --dry-run -s GITHUB_API_KEY=$$GITHUB_API_KEY
+
+env = $(shell cat .env | sed 's/^/export /' | tr '\n' ';')
