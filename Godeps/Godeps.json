@@ -1,0 +1,36 @@
+{
+	"ImportPath": "github.com/matthew-andrews/semver",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v74",
+	"Deps": [
+		{
+			"ImportPath": "github.com/google/go-github/github",
+			"Rev": "63f6986f05c3e857d0bd9d7245b24c12a6c11147"
+		},
+		{
+			"ImportPath": "github.com/google/go-querystring/query",
+			"Rev": "6bb77fe6f42b85397288d4f6f67ac72f8f400ee7"
+		},
+		{
+			"ImportPath": "github.com/matthew-andrews/go-version",
+			"Rev": "401ade5081cb0b4f644a0ca51ba58a5ef686b569"
+		},
+		{
+			"ImportPath": "github.com/urfave/cli",
+			"Comment": "v1.17.0-57-gedb24d0",
+			"Rev": "edb24d02aa3cea2319c33f2836d4a5133907fe4c"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "3f122ce3dbbe488b7e6a8bdb26f41edec852a40b"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2",
+			"Rev": "65a8d08c6292395d47053be10b3c5e91960def76"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2/internal",
+			"Rev": "65a8d08c6292395d47053be10b3c5e91960def76"
+		}
+	]
+}
